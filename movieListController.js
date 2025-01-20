@@ -1,6 +1,6 @@
 let movies=[];
 let id = 0;
-// const createError = require ("http-errors");
+const createError = require ("http-errors");
 
 exports.getAllMovies = (req,res) => {
  res.send(movies);
@@ -37,7 +37,7 @@ exports.deleteMovie =(req,res) => {
 }
 
 exports.updateMovie = (req,res) => {
-    const {title,completed} = req.body;
+    const {title, watched, director, year} = req.body;
     const id = req.params.id;
 
     const movie = movies.find(movie => movie.id == parseInt(id));
@@ -50,7 +50,9 @@ exports.updateMovie = (req,res) => {
                 return{
                     ...movie,
                     title: title || movie.title,
-                    completed: completed || movie.completed
+                    director: director || movie.director,
+                    year: year || movie.year,
+                    watched: watched || movie.watched
                 }
             }
             return movie;
