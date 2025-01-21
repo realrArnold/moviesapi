@@ -59,41 +59,38 @@ exports.getMovieById = async (req, res, next) => {
     }
         */
 
-exports.deleteMovie = async (req, res,next) => {
+exports.deleteMovie = async (req, res, next) => {
   const id = req.params.id;
-  try{
+  try {
     const movie = await movieDB.findByIdAndDelete(id);
     if (!movie) {
-        return next(createError(404,"No movie with that id"))
+      return next(createError(404, "No movie with that id"));
     }
     res.send(movie);
-  } catch(error) {
-  next(createError(500,error.message))
+  } catch (error) {
+    next(createError(500, error.message));
   }
 };
 
-
-exports.updateMovie = (req, res) => {
+exports.updateMovie = async (req, res, next) => {
   const { title, watched, director, year } = req.body;
   const id = req.params.id;
 
-  const movie = movies.find((movie) => movie.id == parseInt(id));
+  //   const movie = movies.find((movie) => movie.id == parseInt(id));
 
-  if (!movie) {
-    return res.send("movie not found");
-  } else {
-    movies = movies.map((movie) => {
-      if (movie.id == parseInt(id)) {
-        return {
-          ...movie,
-          title: title || movie.title,
-          director: director || movie.director,
-          year: year || movie.year,
-          watched: watched || movie.watched,
-        };
-      }
-      return movie;
-    });
+  try {
+    const movie = await movieDB.findByIdAndUpdate(id, {
+    //  ...movie,
+      title: title,
+      director: director,
+      year: year,
+      watched: watched,
+    },{new:true});
+    if (!movie) {
+      return res.send("movie not found");
+    }
+    res.send(movie);
+  } catch (error) {
+    next(createError(500, error.message));
   }
-  res.send(movies);
 };
