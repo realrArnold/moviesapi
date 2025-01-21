@@ -59,13 +59,19 @@ exports.getMovieById = async (req, res, next) => {
     }
         */
 
-exports.deleteMovie = (req, res) => {
+exports.deleteMovie = async (req, res,next) => {
   const id = req.params.id;
-  //make it so the array filters out the object
-  //that has the id which matches theone in our params
-  movies = movies.filter((movie) => movie.id != parseFloat(id));
-  res.send(movies);
+  try{
+    const movie = await movieDB.findByIdAndDelete(id);
+    if (!movie) {
+        return next(createError(404,"No movie with that id"))
+    }
+    res.send(movie);
+  } catch(error) {
+  next(createError(500,error.message))
+  }
 };
+
 
 exports.updateMovie = (req, res) => {
   const { title, watched, director, year } = req.body;
